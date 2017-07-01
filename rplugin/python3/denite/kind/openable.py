@@ -25,10 +25,11 @@ class Kind(Base):
     def action_split(self, context):
         if self.__is_current_buffer_empty():
             self.action_open(context)
-        else:
-            for target in context['targets']:
-                new_context = copy(context)
-                new_context['targets'] = [target]
+            return
+
+        for target in context['targets']:
+            new_context = copy(context)
+            new_context['targets'] = [target]
 
                 self.vim.command('split')
                 self.action_open(new_context)
@@ -36,7 +37,23 @@ class Kind(Base):
     def action_vsplit(self, context):
         if self.__is_current_buffer_empty():
             self.action_open(context)
-        else:
+            return
+
+        for target in context['targets']:
+            new_context = copy(context)
+            new_context['targets'] = [target]
+
+            self.vim.command('vsplit')
+            self.action_open(new_context)
+
+    def action_tabopen(self, context):
+        if self.__is_current_buffer_empty():
+            self.action_open(context)
+            return
+
+        hidden = self.vim.options['hidden']
+        try:
+            self.vim.options['hidden'] = False
             for target in context['targets']:
                 new_context = copy(context)
                 new_context['targets'] = [target]
